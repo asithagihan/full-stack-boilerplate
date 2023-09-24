@@ -1,9 +1,9 @@
-import CreateAction from "./dbActions/createAction";
-import DeleteAction from "./dbActions/deleteAction";
-import GetByIdAction from "./dbActions/getByIdAction";
-import ListAction from "./dbActions/listAction";
-import UpdateAction from "./dbActions/updateAction";
-import OperationTemplate from "./models/operationTemplate";
+import CreateAction from "./db-actions/create-action";
+import DeleteAction from "./db-actions/delete-action";
+import GetByIdAction from "./db-actions/get-by-id-action";
+import ListAction from "./db-actions/list-action";
+import UpdateAction from "./db-actions/update-action";
+import OperationTemplate from "./models/operation-template";
 
 type AppSyncEvent = {
   info: {
