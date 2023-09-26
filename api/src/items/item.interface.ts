@@ -1,10 +1,10 @@
-export interface BaseItem {
+export interface IBaseItem {
   name: string;
   price: number;
   description: string;
   image: string;
 }
 
-export interface Item extends BaseItem {
+export interface IItem extends IBaseItem {
   id: number;
 }

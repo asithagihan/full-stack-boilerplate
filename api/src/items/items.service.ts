@@ -3,13 +3,13 @@
 /**
  * Data Model Interfaces
  */
-import { BaseItem, Item } from "./item.interface";
-import { Items } from "./items.interface";
+import { IBaseItem, IItem } from "./item.interface";
+import { IItems } from "./items.interface";
 
 /**
  * In-Memory Store
  */
-let items: Items = {
+let items: IItems = {
   1: {
     id: 1,
     name: "Burger",
@@ -36,11 +36,11 @@ let items: Items = {
 /**
  * Service Methods
  */
-export const findAll = async (): Promise<Item[]> => Object.values(items);
+export const findAll = async (): Promise<IItem[]> => Object.values(items);
 
-export const find = async (id: number): Promise<Item> => items[id];
+export const find = async (id: number): Promise<IItem> => items[id];
 
-export const create = async (newItem: BaseItem): Promise<Item> => {
+export const create = async (newItem: IBaseItem): Promise<IItem> => {
   const id = new Date().valueOf();
 
   items[id] = {
@@ -53,8 +53,8 @@ export const create = async (newItem: BaseItem): Promise<Item> => {
 
 export const update = async (
   id: number,
-  itemUpdate: BaseItem
-): Promise<Item | null> => {
+  itemUpdate: IBaseItem
+): Promise<IItem | null> => {
   const item = await find(id);
 
   if (!item) {
