@@ -1,1 +1,4 @@
 /app/.env
+api/dist/
+api/node_modules
+web/node_modules
