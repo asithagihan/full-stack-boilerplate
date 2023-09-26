@@ -3,12 +3,11 @@ import express from "express";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
+dotenv.config();
 import { itemsRouter } from "./items/items.router";
 import { errorHandler } from "./middleware/error.middleware";
 import { notFoundHandler } from "./middleware/not-found.middleware";
 import { dataSource } from "./app-data-source";
-
-dotenv.config();
 
 dataSource
   .initialize()

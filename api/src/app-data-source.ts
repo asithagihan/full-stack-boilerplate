@@ -6,7 +6,7 @@ const dataSource = new DataSource({
   // port: 3306,
   // username: "root",
   // password: "test",
-  database: "test",
+  database: process.env.DB_NAME,
   entities: ["src/entity/*.ts"],
   logging: true,
   synchronize: true,
