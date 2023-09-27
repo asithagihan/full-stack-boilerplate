@@ -3,6 +3,7 @@
 /**
  * Data Model Interfaces
  */
+import S3 from "aws-sdk/clients/s3";
 import { IBaseItem, IItem } from "./item.interface";
 import { IItems } from "./items.interface";
 

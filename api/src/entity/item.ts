@@ -1,5 +1,20 @@
 import { Column, Entity, Unique, PrimaryGeneratedColumn } from "typeorm";
 
+export enum Unit {
+  ML = "ml",
+  PCS = "pcs",
+  GRAMS = "g",
+}
+
+export enum ItemType {
+  FINISHED_PRODUCT = "FINISHED_PRODUCT",
+  PACKAGING = "PACKAGING",
+  MATERIAL = "MATERIAL",
+  MAIN_BATCH = "MAIN_BATCH",
+  INPROGRESS_PRODUCT = "INPROGRESS_PRODUCT",
+  CONSUMABLE = "CONSUMABLE",
+}
+
 @Unique("item_sku_constraint", ["sku"])
 @Entity()
 export class Item {
@@ -14,6 +29,29 @@ export class Item {
 
   @Column()
   public name: string;
+
+  @Column()
+  public available_qty: number;
+
+  @Column()
+  public reorder_level: number;
+
+  @Column({
+    type: "enum",
+    enum: Unit,
+    default: Unit.PCS,
+  })
+  public unit: Unit;
+
+  @Column({
+    type: "enum",
+    enum: ItemType,
+    default: ItemType.MATERIAL,
+  })
+  public item_type: ItemType;
+
+  @Column()
+  public image: string;
 }
 
 export default Item;
