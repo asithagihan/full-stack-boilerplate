@@ -1,10 +1,16 @@
 export interface IBaseItem {
+  sku: string;
+  barcode: string;
   name: string;
-  price: number;
-  description: string;
-  image: string;
+  availableQty: number;
+  reorderLevel: number;
 }
 
 export interface IItem extends IBaseItem {
   id: number;
+}
+
+export interface PaginatedResult<T> {
+  items: T[];
+  totalItems: number;
 }

@@ -31,27 +31,10 @@ export class Item {
   public name: string;
 
   @Column()
-  public available_qty: number;
+  public availableQty: number;
 
   @Column()
-  public reorder_level: number;
-
-  @Column({
-    type: "enum",
-    enum: Unit,
-    default: Unit.PCS,
-  })
-  public unit: Unit;
-
-  @Column({
-    type: "enum",
-    enum: ItemType,
-    default: ItemType.MATERIAL,
-  })
-  public item_type: ItemType;
-
-  @Column()
-  public image: string;
+  public reorderLevel: number;
 }
 
 export default Item;

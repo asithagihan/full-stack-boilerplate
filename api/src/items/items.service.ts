@@ -3,76 +3,121 @@
 /**
  * Data Model Interfaces
  */
-import S3 from "aws-sdk/clients/s3";
-import { IBaseItem, IItem } from "./item.interface";
+import { IBaseItem, IItem, PaginatedResult } from "./item.interface";
 import { IItems } from "./items.interface";
+import { Repository } from "typeorm";
+import { Item } from "./../entity/item";
+import { dataSource } from "./../app-data-source";
+const itemRepository = dataSource.getRepository(Item);
 
 /**
- * In-Memory Store
+ * filter, sort , search and paginate items.
  */
-let items: IItems = {
-  1: {
-    id: 1,
-    name: "Burger",
-    price: 599,
-    description: "Tasty",
-    image: "https://cdn.auth0.com/blog/whatabyte/burger-sm.png",
+export const findAll = async (
+  filter: {
+    sku?: string;
+    barcode?: string;
+    name?: string;
+    availableQty?: number;
+    reorderLevel?: number;
   },
-  2: {
-    id: 2,
-    name: "Pizza",
-    price: 299,
-    description: "Cheesy",
-    image: "https://cdn.auth0.com/blog/whatabyte/pizza-sm.png",
+  sort: {
+    field: string;
+    order: "ASC" | "DESC";
   },
-  3: {
-    id: 3,
-    name: "Tea",
-    price: 199,
-    description: "Informative",
-    image: "https://cdn.auth0.com/blog/whatabyte/tea-sm.png",
-  },
+  search: string,
+  page: number,
+  pageSize: number
+): Promise<PaginatedResult<Item>> => {
+  // Build the query
+  const queryBuilder = itemRepository.createQueryBuilder("item");
+
+  // Add filtering
+  if (filter.sku) {
+    queryBuilder.andWhere("item.sku LIKE :sku", { sku: `%${filter.sku}%` });
+  }
+
+  if (filter.barcode) {
+    queryBuilder.andWhere("item.barcode LIKE :barcode", {
+      barcode: `%${filter.barcode}%`,
+    });
+  }
+
+  if (filter.name) {
+    queryBuilder.andWhere("item.name LIKE :name", { name: `%${filter.name}%` });
+  }
+
+  if (filter.availableQty) {
+    queryBuilder.andWhere("item.availableQty >= :availableQty", {
+      availableQty: filter.availableQty,
+    });
+  }
+
+  if (filter.reorderLevel) {
+    queryBuilder.andWhere("item.reorderLevel <= :reorderLevel", {
+      reorderLevel: filter.reorderLevel,
+    });
+  }
+
+  // Add sorting
+  if (sort.field) {
+    queryBuilder.orderBy(sort.field, sort.order);
+  }
+
+  // Add search
+  if (search) {
+    queryBuilder.andWhere(
+      "item.sku LIKE :search OR item.barcode LIKE :search OR item.name LIKE :search",
+      {
+        search: `%${search}%`,
+      }
+    );
+  }
+
+  // Add pagination
+  queryBuilder.skip((page - 1) * pageSize).take(pageSize);
+
+  // Get the results
+  const [items, totalItems] = await queryBuilder.getManyAndCount();
+
+  // Return the results
+  return { items, totalItems };
 };
 
-/**
- * Service Methods
- */
-export const findAll = async (): Promise<IItem[]> => Object.values(items);
-
-export const find = async (id: number): Promise<IItem> => items[id];
+export const find = async (id: number): Promise<IItem> => {
+  const item = await itemRepository.findOneBy({
+    id,
+  });
+  return item;
+};
 
 export const create = async (newItem: IBaseItem): Promise<IItem> => {
-  const id = new Date().valueOf();
-
-  items[id] = {
-    id,
-    ...newItem,
-  };
-
-  return items[id];
+  const item = await itemRepository.save(newItem);
+  return item;
 };
 
 export const update = async (
   id: number,
   itemUpdate: IBaseItem
 ): Promise<IItem | null> => {
-  const item = await find(id);
+  console.log("update : ", itemUpdate);
+  const item = await itemRepository.save({
+    id,
+    ...itemUpdate,
+  });
 
   if (!item) {
     return null;
   }
 
-  items[id] = { id, ...itemUpdate };
-
-  return items[id];
+  return item;
 };
 
 export const remove = async (id: number): Promise<null | void> => {
-  const item = await find(id);
-
-  if (!item) {
+  console.log("delete", id);
+  const result = await itemRepository.delete(id);
+  console.log(result);
+  if (!result) {
     return null;
   }
-
-  delete items[id];
 };
