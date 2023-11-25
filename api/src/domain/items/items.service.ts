@@ -3,79 +3,76 @@
 /**
  * Data Model Interfaces
  */
-import { IBaseItem, IItem, PaginatedResult } from "./item.interface";
-import { IItems } from "./items.interface";
-import { Repository } from "typeorm";
-import { Item } from "./../entity/item";
-import { dataSource } from "./../app-data-source";
+import {
+  ICreateItem,
+  IItem,
+  IItemRequest,
+  IUpdateItem,
+  PaginatedResult,
+} from "../../entity/items/item.interface";
+import { Item } from "../../entity/items/item.repository";
+import { dataSource } from "../../app-data-source";
 const itemRepository = dataSource.getRepository(Item);
 
 /**
  * filter, sort , search and paginate items.
  */
 export const findAll = async (
-  filter: {
-    sku?: string;
-    barcode?: string;
-    name?: string;
-    availableQty?: number;
-    reorderLevel?: number;
-  },
-  sort: {
-    field: string;
-    order: "ASC" | "DESC";
-  },
-  search: string,
-  page: number,
-  pageSize: number
+  itemRequest: IItemRequest
 ): Promise<PaginatedResult<Item>> => {
   // Build the query
   const queryBuilder = itemRepository.createQueryBuilder("item");
 
   // Add filtering
-  if (filter.sku) {
-    queryBuilder.andWhere("item.sku LIKE :sku", { sku: `%${filter.sku}%` });
+  if (itemRequest.filter.sku) {
+    queryBuilder.andWhere("item.sku LIKE :sku", {
+      sku: `%${itemRequest.filter.sku}%`,
+    });
   }
 
-  if (filter.barcode) {
+  if (itemRequest.filter.barcode) {
     queryBuilder.andWhere("item.barcode LIKE :barcode", {
-      barcode: `%${filter.barcode}%`,
+      barcode: `%${itemRequest.filter.barcode}%`,
     });
   }
 
-  if (filter.name) {
-    queryBuilder.andWhere("item.name LIKE :name", { name: `%${filter.name}%` });
+  if (itemRequest.filter.name) {
+    queryBuilder.andWhere("item.name LIKE :name", {
+      name: `%${itemRequest.filter.name}%`,
+    });
   }
 
-  if (filter.availableQty) {
+  if (itemRequest.filter.availableQty) {
     queryBuilder.andWhere("item.availableQty >= :availableQty", {
-      availableQty: filter.availableQty,
+      availableQty: itemRequest.filter.availableQty,
     });
   }
 
-  if (filter.reorderLevel) {
+  if (itemRequest.filter.reorderLevel) {
     queryBuilder.andWhere("item.reorderLevel <= :reorderLevel", {
-      reorderLevel: filter.reorderLevel,
+      reorderLevel: itemRequest.filter.reorderLevel,
     });
   }
 
   // Add sorting
-  if (sort.field) {
-    queryBuilder.orderBy(sort.field, sort.order);
+  if (itemRequest.sort.field) {
+    queryBuilder.orderBy(itemRequest.sort.field, itemRequest.sort.order);
   }
 
   // Add search
-  if (search) {
+  if (itemRequest.search) {
     queryBuilder.andWhere(
       "item.sku LIKE :search OR item.barcode LIKE :search OR item.name LIKE :search",
       {
-        search: `%${search}%`,
+        search: `%${itemRequest.search}%`,
       }
     );
   }
 
   // Add pagination
-  queryBuilder.skip((page - 1) * pageSize).take(pageSize);
+  queryBuilder
+    .skip((itemRequest.page - 1) * itemRequest.pageSize)
+    .take(itemRequest.pageSize);
 
   // Get the results
   const [items, totalItems] = await queryBuilder.getManyAndCount();
@@ -91,14 +88,14 @@ export const find = async (id: number): Promise<IItem> => {
   return item;
 };
 
-export const create = async (newItem: IBaseItem): Promise<IItem> => {
+export const create = async (newItem: ICreateItem): Promise<IItem> => {
   const item = await itemRepository.save(newItem);
   return item;
 };
 
 export const update = async (
   id: number,
-  itemUpdate: IBaseItem
+  itemUpdate: IUpdateItem
 ): Promise<IItem | null> => {
   console.log("update : ", itemUpdate);
   const item = await itemRepository.save({

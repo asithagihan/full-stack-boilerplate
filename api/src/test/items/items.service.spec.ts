@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { find } from "../../items/items.service";
+import { find } from "../../domain/items/items.service";
 
 describe("Calculator Tests", () => {
   it("should return 2 when seek 2", async () => {

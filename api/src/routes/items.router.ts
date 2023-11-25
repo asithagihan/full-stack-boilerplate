@@ -2,8 +2,13 @@
  * Required External Modules and Interfaces
  */
 import express, { Request, Response } from "express";
-import * as ItemService from "./items.service";
-import { IBaseItem, IItem } from "./item.interface";
+import * as ItemService from "../domain/items/items.service";
+import {
+  IBaseItem,
+  IItem,
+  IItemRequest,
+  PaginatedResult,
+} from "../entity/items/item.interface";
 
 /**
  * Router Definition
@@ -18,7 +23,10 @@ export const itemsRouter = express.Router();
 
 itemsRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const items: IItem[] = await ItemService.findAll();
+    const itemRequest: IItemRequest = req.body;
+    const items: PaginatedResult<IItem> = await ItemService.findAll(
+      itemRequest
+    );
 
     res.status(200).send(items);
   } catch (e) {

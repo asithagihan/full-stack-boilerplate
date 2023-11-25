@@ -2,7 +2,7 @@ Artchitecture Diagram
 ![Artchitecture](https://github.com/asithagihan/full-stack-boilerplate/blob/main/full-stack-boilerplate.drawio.png?raw=true)
 
 npx typeorm-ts-node-commonjs migration:generate -d src/app-data-source.ts migrations/InitialTables
-npx typeorm-ts-node-commonjs migration:run - -d src/app-data-source.ts
+npx typeorm-ts-node-commonjs migration:run -d src/app-data-source.ts
 
 1. For a Read-Heavy System - Consider using a Cache.
 2. For a Write-Heavy System - Use Message Queues for async processing

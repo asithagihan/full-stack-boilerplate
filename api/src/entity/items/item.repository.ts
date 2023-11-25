@@ -1,20 +1,5 @@
 import { Column, Entity, Unique, PrimaryGeneratedColumn } from "typeorm";
 
-export enum Unit {
-  ML = "ml",
-  PCS = "pcs",
-  GRAMS = "g",
-}
-
-export enum ItemType {
-  FINISHED_PRODUCT = "FINISHED_PRODUCT",
-  PACKAGING = "PACKAGING",
-  MATERIAL = "MATERIAL",
-  MAIN_BATCH = "MAIN_BATCH",
-  INPROGRESS_PRODUCT = "INPROGRESS_PRODUCT",
-  CONSUMABLE = "CONSUMABLE",
-}
-
 @Unique("item_sku_constraint", ["sku"])
 @Entity()
 export class Item {

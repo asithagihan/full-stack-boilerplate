@@ -16,12 +16,6 @@ export class CognitoStack extends Stack {
         email: true,
         username: true,
       },
-      // standardAttributes: {
-      //   profilePicture: { mutable: true },
-      // },
-      // customAttributes: {
-      //   isEmployee: new cognito.BooleanAttribute({ mutable: true }),
-      // },
       passwordPolicy: {
         minLength: 8,
         requireDigits: false,
